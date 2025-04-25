@@ -2,18 +2,18 @@
   "name": "vite-plugin-bugsnag",
   "version": "0.0.1",
   "description": "Vite plugins for common BugSnag actions",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prebuild": "rm -rf dist",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bugsnag/vite-plugin-bugsnag.git"
   },
   "keywords": [
-    "vite",
+    "vite-plugin",
     "bugsnag",
-    "plugin",
     "sourcemaps"
   ],
   "author": "BugSnag",
@@ -21,5 +21,15 @@
   "bugs": {
     "url": "https://github.com/bugsnag/vite-plugin-bugsnag/issues"
   },
-  "homepage": "https://github.com/bugsnag/vite-plugin-bugsnag#readme"
+  "homepage": "https://github.com/bugsnag/vite-plugin-bugsnag#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.25.1",
+    "eslint": "^9.25.1",
+    "globals": "^16.0.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.31.0"
+  },
+  "peerDependencies": {
+    "vite": "^6.3.3"
+  }
 }
