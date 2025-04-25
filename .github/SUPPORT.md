@@ -21,4 +21,4 @@ Please note: we cannot promise that we will fulfil all requests
 
 ## Pull Requests
 
-If you have made a fix and would like to raise a pull request, please read our [CONTRIBUTING.md](../CONTRIBUTING.md) file before creating the pull request.
+If you have made a fix and would like to raise a pull request, please read our [CONTRIBUTING.md](../docs/CONTRIBUTING.md) file before creating the pull request.

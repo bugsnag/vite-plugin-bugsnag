@@ -24,7 +24,7 @@ npm install --save-dev vite-plugin-bugsnag
 
 ## Contributing
 
-All contributors are welcome! See our [contributing guide](CONTRIBUTING.md).
+All contributors are welcome! See our [contributing guide](docs/CONTRIBUTING.md).
 
 ## License
 
