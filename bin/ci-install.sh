@@ -1,0 +1,1 @@
+npm i --no-save --no-package-lock vite@$VITE_VERSION

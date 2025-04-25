@@ -6,8 +6,8 @@ jobs:
     name: Vite ${{ matrix.vite }} / Node ${{ matrix.node }}
     strategy:
       matrix:
-        node: [22]
-        vite: [6]
+        node: [18,20,22]
+        vite: [4,5,6]
     env:
       VITE_VERSION: ${{ matrix.vite }}
     steps:
@@ -17,4 +17,5 @@ jobs:
       - name: Checkout PR branch
         uses: actions/checkout@v1
       - run: npm install
+      - run: bin/ci-install.sh
       - run: npm test
