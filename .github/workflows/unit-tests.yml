@@ -6,7 +6,7 @@ jobs:
     strategy:
       matrix:
         node: [22]
-        vite: [3, 4, 5]
+        vite: [6]
     env:
       VITE_VERSION: ${{ matrix.vite }}
     steps:
