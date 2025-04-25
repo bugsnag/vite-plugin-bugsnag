@@ -1,9 +1,9 @@
-name: unit tests
+name: Unit tests
 on: push
 jobs:
   build:
     runs-on: ubuntu-24.04
-    name: Vite ${{ matrix.vite }} unit tests on Node ${{ matrix.node }}
+    name: Vite@${{ matrix.vite }}, Node@${{ matrix.node }}
     strategy:
       matrix:
         node: [22]
