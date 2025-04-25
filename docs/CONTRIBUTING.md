@@ -17,7 +17,7 @@ If you've identified a fix to a new or existing issue, we welcome contributions!
 
 - [Fork](https://help.github.com/articles/fork-a-repo) the [repo on github](https://github.com/bugsnag/vite-plugin-bugsnag)
 - Make your changes locally
-- Ensure the changes pass tests (`npm run test`)
+- Ensure the changes pass tests (`npm test`)
 - Commit and push your changes
 - [Make a pull request](https://help.github.com/articles/using-pull-requests)
 - Ensure CI passes (and if it fails, attempt to address the cause)
