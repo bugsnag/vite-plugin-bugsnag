@@ -30,6 +30,7 @@
     "@babel/core": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
     "@eslint/js": "^9.25.1",
+    "@vitest/coverage-v8": "^3.1.2",
     "eslint": "^9.25.1",
     "globals": "^16.0.0",
     "tape": "^5.9.0",
