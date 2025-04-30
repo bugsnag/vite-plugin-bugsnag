@@ -1,0 +1,108 @@
+diff --git a/node_modules/@bugsnag/cli/bugsnag-cli.d.ts b/node_modules/@bugsnag/cli/bugsnag-cli.d.ts
+new file mode 100644
+index 0000000..9e9cb0f
+--- /dev/null
++++ b/node_modules/@bugsnag/cli/bugsnag-cli.d.ts
+@@ -0,0 +1,101 @@
++declare module '@bugsnag/cli' {
++    interface BaseOptions {
++        apiKey?: string
++        dryRun?: boolean
++        logLevel?: string
++        port?: number
++        failOnUploadError?: boolean
++        verbose?: boolean
++        overwrite?: boolean
++        retries?: number
++        timeout?: number
++    }
++
++    export interface BugsnagCreateBuildOptions extends BaseOptions {
++        autoAssignRelease?: boolean
++        buildApiRootUrl?: string
++        builderName?: string
++        metadata?: object
++        provider?: string
++        releaseStage?: string
++        repository?: string
++        revision?: string
++        versionName?: string
++        androidAab?: string
++        appManifest?: string
++        versionCode?: string
++        bundleVersion?: string
++    } 
++
++    export interface BugsnagUploadReactNativeOptions extends BaseOptions {
++        bundle?: string
++        codeBundleId?: string
++        sourceMap?: string
++        versionName?: string
++        androidAppManifest?: string
++        androidVariant?: string
++        androidVersionCode?: string
++        iosBundleVersion?: string
++        iosPlist?: string
++        iosScheme?: string
++        iosXcodeProject?: string
++    }
++
++    export interface BugsnagUploadiOSOptions extends BaseOptions {
++        bundle?: string
++        codeBundleId?: string
++        sourceMap?: string
++        versionName?: string
++        bundleVersion?: string
++        plist?: string
++        scheme?: string
++        xcodeProject?: string
++    }
++
++    export interface BugsnagUploadAndroidOptions extends BaseOptions {
++        bundle?: string
++        codeBundleId?: string
++        sourceMap?: string
++        versionName?: string
++        appManifest?: string
++        variant?: string
++        versionCode?: string
++    }
++
++    export interface BugsnagUploadJsOptions extends BaseOptions {
++        baseUrl?: string
++        bundle?: string
++        bundleUrl?: string
++        projectRoot?: string
++        sourceMap?: string
++        versionName?: string
++        codeBundleId?: string
++    }
++
++    /**
++     * Convert camelCase to kebab-case
++     */
++    export function camelToKebab (str: string): string;
++
++    /**
++     * Execute a Bugsnag CLI command
++     */
++    export function run (command: string, options?: object, target?: string): Promise<string>;
++
++    /**
++     * Send build information to Bugsnag
++     */
++    export function CreateBuild (options: BugsnagCreateBuildOptions, target?: string): Promise<string>;
++
++    /**
++     * Upload sourcemaps to Bugsnag
++     * Provides nested methods for specific upload types.
++     */
++    export const Upload: {
++        ReactNative: ((options: BugsnagUploadReactNativeOptions, target?: string) => Promise<string>) & {
++            Android: (options: BugsnagUploadAndroidOptions, target?: string) => Promise<string>,
++            iOS: (options: BugsnagUploadiOSOptions, target?: string) => Promise<string>
++        },
++        Js: (options: BugsnagUploadJsOptions, target?: string) => Promise<string>,
++    }
++}
+\ No newline at end of file
