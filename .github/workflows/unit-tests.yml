@@ -3,7 +3,6 @@ on: push
 jobs:
   build:
     runs-on: ubuntu-24.04
-    name: Vite ${{ matrix.vite }} / Node ${{ matrix.node }}
     strategy:
       matrix:
         node: [22] 
@@ -16,6 +15,6 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Checkout PR branch
         uses: actions/checkout@v1
-      - run: npm install
+      - run: npm ci
       - run: bin/ci-install.sh
       - run: npm test
