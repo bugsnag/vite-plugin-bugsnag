@@ -45,6 +45,6 @@
     "vite": "^6.3.3"
   },
   "dependencies": {
-    "@bugsnag/cli": "^3.0.0"
+    "@bugsnag/cli": "^3.0.1"
   }
 }
