@@ -1,5 +1,6 @@
+import Bugsnag from '@bugsnag/cli'
+import type { BugsnagCreateBuildOptions } from '@bugsnag/cli'
 import type { Plugin } from 'vite'
-import Bugsnag, { BugsnagCreateBuildOptions } from '@bugsnag/cli'
 
 const LOG_PREFIX = '[BugsnagBuildReporterPlugin]'
 
@@ -59,7 +60,8 @@ function getBuildOptions (configOptions: BugsnagBuildReporterPluginOptions) {
 
 export interface BugsnagBuildReporterPluginOptions {
   apiKey: string
-  appVersion: string
+  appVersion: string // versionName
+  endpoint?: string // buildApiRootUrl
   autoAssignRelease?: boolean
   builderName?: string
   metadata?: object
@@ -76,6 +78,4 @@ export interface BugsnagBuildReporterPluginOptions {
     warn: (message: string) => void
     error: (message: string) => void
   }
-  path?: string
-  endpoint?: string
 }
