@@ -11,7 +11,7 @@ vi.mock('@bugsnag/cli', () => ({
 }))
 
 describe('BugsnagBuildReporterPlugin', () => {
-    test('should report the build successfully', async () => {
+    test('should report a successful build', async () => {
         const mockLogger = {
             info: vi.fn(),
             error: vi.fn(),
@@ -46,8 +46,41 @@ describe('BugsnagBuildReporterPlugin', () => {
 
         await build(viteConfig)
 
-        expect(mockLogger.info).toHaveBeenCalledWith(
-            '[BugsnagBuildReporterPlugin]creating build for version "1.2.3" using the bugsnag-cli'
-        )
+        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagBuildReporterPlugin]creating build for version "1.2.3" using the bugsnag-cli')
+        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagBuildReporterPlugin]Build reported successfully')
+    })
+
+    test('should not report a failed build', async () => {
+        const mockLogger = {
+            info: vi.fn(),
+            error: vi.fn(),
+            warn: vi.fn(),
+            debug: vi.fn()
+        }
+
+        const plugin = BugsnagBuildReporterPlugin({
+            apiKey: 'test-api-key',
+            appVersion: '1.2.3',
+            logger: mockLogger
+        })
+
+        const fixturesPath = resolve(__dirname, '../test/fixtures/vite/build-reporter/failed-build')
+        const viteConfig = {
+            root: fixturesPath,
+            plugins: [plugin]
+        }
+
+        // Ensure the output directory is clean
+        const outputDir = resolve(fixturesPath, 'dist')
+        if (fs.existsSync(outputDir)) {
+            fs.rmSync(outputDir, { recursive: true, force: true })
+        }
+
+        await build(viteConfig).catch(() => {
+            // Ignore the error
+        })
+
+        // No internal logging for a failed build
+        expect(mockLogger.info).not.toHaveBeenCalled()
     })
 })
