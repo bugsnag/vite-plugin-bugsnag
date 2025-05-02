@@ -30,13 +30,14 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
 
   return {
     name: 'vite-plugin-bugsnag-source-map-uploader',
-    async writeBundle () {
+    async writeBundle (options) {
       const logger = configOptions.logger || this.environment.logger
+      const baseUrl = options.dir || process.cwd()
 
       if (enableSourcemapUploads) {
         logger.info(`${LOG_PREFIX}uploading sourcemaps using the bugsnag-cli`)
 
-        const uploadOptions = getUploadOptions(configOptions)
+        const uploadOptions = getUploadOptions(configOptions, baseUrl)
         Bugsnag.Upload.Js(uploadOptions, process.cwd())
           .then((output) => {
             output.split('\n').forEach((line) => {
@@ -53,16 +54,16 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
   }
 }
 
-function getUploadOptions (configOptions: ConfigOptions): BugsnagUploadJsOptions {
+function getUploadOptions (configOptions: ConfigOptions, baseUrl: string): BugsnagUploadJsOptions {
   const uploadOptions: BugsnagUploadJsOptions = {
     apiKey: configOptions.apiKey,
+    baseUrl,
     projectRoot: process.cwd(),
     versionName: configOptions.appVersion,
     codeBundleId: configOptions.codeBundleId,
     uploadApiRootUrl: configOptions.endpoint,
     bundle: configOptions.bundle,
-    bundleUrl: configOptions.bundleUrl // || sourceMap.url,
-    // sourceMap: sourceMap.map,
+    bundleUrl: configOptions.bundleUrl
   }
 
   for (const [key, value] of Object.entries(uploadOptions)) {

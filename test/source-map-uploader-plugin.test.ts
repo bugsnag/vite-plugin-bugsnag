@@ -3,6 +3,7 @@ import { resolve } from 'path'
 import { build } from 'vite'
 import { describe, expect, test, vi } from 'vitest'
 import { BugsnagSourceMapUploaderPlugin } from '../src/source-map-uploader-plugin'
+import Bugsnag from '@bugsnag/cli'
 
 vi.mock('@bugsnag/cli', () => ({
     default: {
@@ -44,17 +45,29 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
             releaseStage: 'production'
         })
 
-        const fixturesPath = resolve(__dirname, '../test/fixtures/vite/build-reporter/successful-upload')
+        const fixturesPath = resolve(__dirname, '..', 'test/fixtures/vite/build-reporter/successful-upload')
         const viteConfig = {
             root: fixturesPath,
-            plugins: [plugin]
+            plugins: [plugin],
+            build: { sourcemap: true } 
         }
 
         cleanBuildDir(fixturesPath)
 
         await build(viteConfig)
 
-        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin]uploading sourcemaps using the bugsnag-cli')
+        const originalCreateBuild = vi.mocked(Bugsnag.Upload.Js)
+        
+        const outputDir = resolve(fixturesPath, 'dist')
+        const projectRoot = process.cwd()
 
+        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin]uploading sourcemaps using the bugsnag-cli')
+        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin]Sourcemaps uploaded successfully')
+        expect(originalCreateBuild).toHaveBeenCalledWith({
+            apiKey: 'test-api',
+            versionName: '1.0.0',
+            baseUrl: outputDir,
+            projectRoot
+        }, projectRoot)
     })
 })
