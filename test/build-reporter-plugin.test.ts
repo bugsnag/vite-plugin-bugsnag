@@ -11,6 +11,13 @@ vi.mock('@bugsnag/cli', () => ({
     }
 }))
 
+const cleanBuildDir = (dir: string) => {
+    const outputDir = resolve(dir, 'dist')
+    if (fs.existsSync(outputDir)) {
+        fs.rmSync(outputDir, { recursive: true, force: true })
+    }
+}
+
 describe('BugsnagBuildReporterPlugin', () => {
     test('should report a successful build', async () => {
         const mockLogger = {
@@ -39,11 +46,7 @@ describe('BugsnagBuildReporterPlugin', () => {
             plugins: [plugin]
         }
 
-        // Ensure the output directory is clean
-        const outputDir = resolve(fixturesPath, 'dist')
-        if (fs.existsSync(outputDir)) {
-            fs.rmSync(outputDir, { recursive: true, force: true })
-        }
+        cleanBuildDir(fixturesPath)
 
         await build(viteConfig)
 
@@ -72,11 +75,7 @@ describe('BugsnagBuildReporterPlugin', () => {
             plugins: [plugin]
         }
 
-        // Ensure the output directory is clean
-        const outputDir = resolve(fixturesPath, 'dist')
-        if (fs.existsSync(outputDir)) {
-            fs.rmSync(outputDir, { recursive: true, force: true })
-        }
+        cleanBuildDir(fixturesPath)
 
         await build(viteConfig).catch(() => {
             // Ignore the error
@@ -113,12 +112,8 @@ describe('BugsnagBuildReporterPlugin', () => {
             plugins: [plugin]
         }
 
-        // Ensure the output directory is clean
-        const outputDir = resolve(fixturesPath, 'dist')
-        if (fs.existsSync(outputDir)) {
-            fs.rmSync(outputDir, { recursive: true, force: true })
-        }
-
+        cleanBuildDir(fixturesPath)
+        
         // Update the BugsnagCLI mock to throw an error
         const originalCreateBuild = vi.mocked(BugsnagCLI.CreateBuild)
         originalCreateBuild.mockImplementationOnce(() => Promise.reject(new Error('Bugsnag CLI error')))
