@@ -50,7 +50,7 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
         logger.info(`${LOG_PREFIX} uploading sourcemaps using the bugsnag-cli`)
 
         const tasks = uploads.map((uploadOptions) => {
-          Bugsnag.Upload.Js(uploadOptions, outputDir)
+          return Bugsnag.Upload.Js(uploadOptions, outputDir)
             .then((output) => {
               output.split('\n').forEach((line) => {
                 logger.info(`${LOG_PREFIX} ${line}`)
