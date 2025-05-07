@@ -42,7 +42,8 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
             logger: mockLogger,
             apiKey: 'test-api',
             appVersion: '1.0.0',
-            releaseStage: 'production'
+            mode: 'production',
+            baseUrl: 'https://example.com'
         })
 
         const fixturesPath = resolve(__dirname, '..', 'test/fixtures/vite/build-reporter/successful-upload')
@@ -56,18 +57,68 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
 
         await build(viteConfig)
 
-        const originalCreateBuild = vi.mocked(Bugsnag.Upload.Js)
-        
-        const outputDir = resolve(fixturesPath, 'dist')
+        const sourcemapUpload = vi.mocked(Bugsnag.Upload.Js)
         const projectRoot = process.cwd()
+        const outputDir = resolve(fixturesPath, 'dist')
 
-        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin]uploading sourcemaps using the bugsnag-cli')
-        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin]Sourcemaps uploaded successfully')
-        expect(originalCreateBuild).toHaveBeenCalledWith({
+        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] uploading sourcemaps using the bugsnag-cli')
+        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
+        
+        expect(sourcemapUpload).toHaveBeenCalledExactlyOnceWith({
             apiKey: 'test-api',
-            versionName: '1.0.0',
-            baseUrl: outputDir,
-            projectRoot
-        }, projectRoot)
+            bundleUrl: 'https://example.com/assets/index-BJy1ihd3.js',
+            bundle: 'assets/index-BJy1ihd3.js',
+            projectRoot,
+            sourceMap: 'assets/index-BJy1ihd3.js.map',
+            versionName: '1.0.0'
+        }, outputDir)
+        
+        sourcemapUpload.mockClear()
+    })
+
+    test('should use the outputDir to construct urls if baseUrl is not provided', async () => {
+        const mockLogger = {
+            info: vi.fn(),
+            error: vi.fn(),
+            warn: vi.fn(),
+            debug: vi.fn()
+        }
+
+        const plugin = BugsnagSourceMapUploaderPlugin({
+            logger: mockLogger,
+            apiKey: 'test-api',
+            appVersion: '1.0.0',
+            mode: 'production'
+        })
+
+        const fixturesPath = resolve(__dirname, '..', 'test/fixtures/vite/build-reporter/successful-upload')
+        const viteConfig = {
+            root: fixturesPath,
+            plugins: [plugin],
+            build: { sourcemap: true } 
+        }
+
+        cleanBuildDir(fixturesPath)
+
+        await build(viteConfig)
+
+        const sourcemapUpload = vi.mocked(Bugsnag.Upload.Js)
+
+        const projectRoot = process.cwd()
+        const outputDir = resolve(fixturesPath, 'dist')
+        const bundleUrl = resolve(outputDir, 'assets/index-BJy1ihd3.js')
+
+        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] uploading sourcemaps using the bugsnag-cli')
+        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
+        expect(sourcemapUpload).toHaveBeenCalledExactlyOnceWith({
+            apiKey: 'test-api',
+            bundleUrl,
+            bundle: 'assets/index-BJy1ihd3.js',
+            projectRoot,
+            sourceMap: 'assets/index-BJy1ihd3.js.map',
+            versionName: '1.0.0'
+        }, outputDir)
+
+        sourcemapUpload.mockClear()
     })
 })

@@ -2,16 +2,15 @@
   "name": "vite-plugin-bugsnag",
   "version": "0.0.1",
   "description": "Vite plugins for common BugSnag actions",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "prebuild": "rm -rf dist",
-    "postinstall": "patch-package",
     "build": "tsc",
     "pretest": "npm run build",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage --run",
+    "test:watch": "vitest"
   },
   "repository": {
     "type": "git",
