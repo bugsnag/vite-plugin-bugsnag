@@ -1,5 +1,6 @@
 import Bugsnag from '@bugsnag/cli'
 import type { BugsnagUploadJsOptions } from '@bugsnag/cli'
+import path from 'path'
 import type { Plugin } from 'vite'
 
 const LOG_PREFIX = '[BugsnagSourceMapUploaderPlugin]'
@@ -32,14 +33,13 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
     async writeBundle (options, bundle) {
       const logger = configOptions.logger || this.environment.logger
       const outputDir = options.dir || process.cwd()
-      const baseUrl = configOptions.baseUrl || outputDir
 
       if (enableSourcemapUploads) {
         const uploads: BugsnagUploadJsOptions[] = []
         for (const [key, value] of Object.entries(bundle)) {
           if (value.type === 'chunk' && !!value.sourcemapFileName) {
             const bundle = key
-            const bundleUrl = [baseUrl, value.fileName].join('/')
+            const bundleUrl = configOptions.baseUrl ? new URL(value.fileName, configOptions.baseUrl).toString() : path.resolve(outputDir, value.fileName)
             const sourceMap = value.sourcemapFileName ?? undefined
             const projectRoot = process.cwd()
             const uploadOptions = getUploadOptions(bundle, bundleUrl, sourceMap, projectRoot, configOptions)
