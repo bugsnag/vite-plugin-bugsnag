@@ -26,7 +26,7 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
     throw new Error(`${LOG_PREFIX} "apiKey" is required`)
   }
 
-  const enableSourcemapUploads = configOptions.mode === 'production' || process.env.NODE_ENV === 'release'
+  const enableSourcemapUploads = configOptions.mode === 'production' || process.env.NODE_ENV === 'production'
 
   return {
     name: 'vite-plugin-bugsnag-source-map-uploader',

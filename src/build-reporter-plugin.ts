@@ -21,9 +21,9 @@ export function BugsnagBuildReporterPlugin (configOptions: BugsnagBuildReporterP
 
       Bugsnag.CreateBuild(buildOptions, process.cwd())
         .then((output) => {
-            output.split('\n').forEach((line) => {
-              logger.info(`${LOG_PREFIX} ${line}`)
-            })
+          output.split('\n').forEach((line) => {
+            logger.info(`${LOG_PREFIX} ${line}`)
+          })
         })
         .catch((err) => {
           err.toString().split('\n').forEach((line: string) => {

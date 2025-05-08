@@ -67,10 +67,10 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
         expect(sourcemapUpload).toHaveBeenCalledExactlyOnceWith({
                 apiKey: 'test-api',
-                bundleUrl: 'https://example.com/assets/index-BeYSa9L1.js',
-                bundle: 'assets/index-BeYSa9L1.js',
+                bundleUrl: 'https://example.com/assets/index-DTHX3LI9.js',
+                bundle: 'assets/index-DTHX3LI9.js',
                 projectRoot,
-                sourceMap: 'assets/index-BeYSa9L1.js.map',
+                sourceMap: 'assets/index-DTHX3LI9.js.map',
                 versionName: '1.0.0'
             },
             outputDir
@@ -109,16 +109,16 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
 
         const projectRoot = process.cwd()
         const outputDir = resolve(fixturesPath, 'dist')
-        const bundleUrl = resolve(outputDir, 'assets/index-BeYSa9L1.js')
+        const bundleUrl = resolve(outputDir, 'assets/index-DTHX3LI9.js')
 
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] uploading sourcemaps using the bugsnag-cli')
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
         expect(sourcemapUpload).toHaveBeenCalledExactlyOnceWith({
                 apiKey: 'test-api',
                 bundleUrl,
-                bundle: 'assets/index-BeYSa9L1.js',
+                bundle: 'assets/index-DTHX3LI9.js',
                 projectRoot,
-                sourceMap: 'assets/index-BeYSa9L1.js.map',
+                sourceMap: 'assets/index-DTHX3LI9.js.map',
                 versionName: '1.0.0'
             },
             outputDir
