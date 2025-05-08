@@ -1,9 +1,9 @@
-import fs from 'fs'
+import Bugsnag from '@bugsnag/cli'
 import { resolve } from 'path'
 import { build } from 'vite'
 import { describe, expect, test, vi } from 'vitest'
 import { BugsnagSourceMapUploaderPlugin } from '../src/source-map-uploader-plugin'
-import Bugsnag from '@bugsnag/cli'
+import cleanBuildDir from './lib/clean-build-dir'
 
 vi.mock('@bugsnag/cli', () => ({
     default: {
@@ -12,13 +12,6 @@ vi.mock('@bugsnag/cli', () => ({
         }
     }
 }))
-
-const cleanBuildDir = (dir: string) => {
-    const outputDir = resolve(dir, 'dist')
-    if (fs.existsSync(outputDir)) {
-        fs.rmSync(outputDir, { recursive: true, force: true })
-    }
-}
 
 describe('BugsnagSourceMapUploaderPlugin', () => {
     test('should return a valid plugin object', async () => {

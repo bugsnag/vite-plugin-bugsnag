@@ -1,22 +1,15 @@
-import fs from 'fs'
+import BugsnagCLI from '@bugsnag/cli'
 import { resolve } from 'path'
 import { build } from 'vite'
 import { describe, expect, test, vi } from 'vitest'
 import { BugsnagBuildReporterPlugin } from '../src/build-reporter-plugin'
-import BugsnagCLI from '@bugsnag/cli'
+import cleanBuildDir from './lib/clean-build-dir'
 
 vi.mock('@bugsnag/cli', () => ({
     default: {
         CreateBuild: vi.fn(() => Promise.resolve('Build reported successfully'))
     }
 }))
-
-const cleanBuildDir = (dir: string) => {
-    const outputDir = resolve(dir, 'dist')
-    if (fs.existsSync(outputDir)) {
-        fs.rmSync(outputDir, { recursive: true, force: true })
-    }
-}
 
 describe('BugsnagBuildReporterPlugin', () => {
     test('should report a successful build', async () => {
