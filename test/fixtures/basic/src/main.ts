@@ -1,7 +1,7 @@
 import './style.css'
-// @ts-expect-error import is weird
+// @ts-expect-error cannot find module
 import typescriptLogo from './typescript.svg'
-// @ts-expect-error import is weird
+// @ts-expect-error cannot find module
 import viteLogo from '/vite.svg'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
