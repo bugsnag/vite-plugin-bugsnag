@@ -32,7 +32,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
 
     test('throws an error if apiKey is not provided', async () => {
         const createPlugin = () => BugsnagSourceMapUploaderPlugin({
-            apiKey: undefined as unknown as string, // undefined apiKey
+            apiKey: undefined as unknown as string,
             appVersion: '1.0.0',
         })
 
@@ -72,15 +72,16 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
 
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] uploading sourcemaps using the bugsnag-cli')
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
-        
         expect(sourcemapUpload).toHaveBeenCalledExactlyOnceWith({
-            apiKey: 'test-api',
-            bundleUrl: 'https://example.com/assets/index-BJy1ihd3.js',
-            bundle: 'assets/index-BJy1ihd3.js',
-            projectRoot,
-            sourceMap: 'assets/index-BJy1ihd3.js.map',
-            versionName: '1.0.0'
-        }, outputDir)
+                apiKey: 'test-api',
+                bundleUrl: 'https://example.com/assets/index-BeYSa9L1.js',
+                bundle: 'assets/index-BeYSa9L1.js',
+                projectRoot,
+                sourceMap: 'assets/index-BeYSa9L1.js.map',
+                versionName: '1.0.0'
+            },
+            outputDir
+        )
         
         sourcemapUpload.mockClear()
     })
@@ -115,18 +116,20 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
 
         const projectRoot = process.cwd()
         const outputDir = resolve(fixturesPath, 'dist')
-        const bundleUrl = resolve(outputDir, 'assets/index-BJy1ihd3.js')
+        const bundleUrl = resolve(outputDir, 'assets/index-BeYSa9L1.js')
 
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] uploading sourcemaps using the bugsnag-cli')
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
         expect(sourcemapUpload).toHaveBeenCalledExactlyOnceWith({
-            apiKey: 'test-api',
-            bundleUrl,
-            bundle: 'assets/index-BJy1ihd3.js',
-            projectRoot,
-            sourceMap: 'assets/index-BJy1ihd3.js.map',
-            versionName: '1.0.0'
-        }, outputDir)
+                apiKey: 'test-api',
+                bundleUrl,
+                bundle: 'assets/index-BeYSa9L1.js',
+                projectRoot,
+                sourceMap: 'assets/index-BeYSa9L1.js.map',
+                versionName: '1.0.0'
+            },
+            outputDir
+        )
 
         sourcemapUpload.mockClear()
     })

@@ -40,7 +40,7 @@ describe('BugsnagBuildReporterPlugin', () => {
             }
         })
 
-        const fixturesPath = resolve(__dirname, '../test/fixtures/vite/build-reporter/successful-upload')
+        const fixturesPath = resolve(__dirname, '../test/fixtures/basic')
         const viteConfig = {
             root: fixturesPath,
             plugins: [plugin]
@@ -51,8 +51,8 @@ describe('BugsnagBuildReporterPlugin', () => {
         await build(viteConfig)
 
         expect(mockLogger.info).toHaveBeenCalledTimes(2)
-        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagBuildReporterPlugin]creating build for version "1.2.3" using the bugsnag-cli')
-        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagBuildReporterPlugin]Build reported successfully')
+        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagBuildReporterPlugin] creating build for version "1.2.3" using the bugsnag-cli')
+        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagBuildReporterPlugin] Build reported successfully')
     })
 
     test('should not report a failed build', async () => {
@@ -69,7 +69,7 @@ describe('BugsnagBuildReporterPlugin', () => {
             logger: mockLogger
         })
 
-        const fixturesPath = resolve(__dirname, '../test/fixtures/vite/build-reporter/failed-build')
+        const fixturesPath = resolve(__dirname, '../test/fixtures/error')
         const viteConfig = {
             root: fixturesPath,
             plugins: [plugin]
@@ -82,7 +82,7 @@ describe('BugsnagBuildReporterPlugin', () => {
         })
 
         expect(mockLogger.info).not.toHaveBeenCalled()
-        expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('[BugsnagBuildReporterPlugin]build failed with error:'))
+        expect(mockLogger.error).toHaveBeenCalledExactlyOnceWith(expect.stringContaining('[BugsnagBuildReporterPlugin] build failed with error:'))
     })
 
     test('should log errors encountered when reporting build', async () => {
@@ -106,7 +106,7 @@ describe('BugsnagBuildReporterPlugin', () => {
             }
         })
 
-        const fixturesPath = resolve(__dirname, '../test/fixtures/vite/build-reporter/successful-upload')
+        const fixturesPath = resolve(__dirname, '../test/fixtures/basic')
         const viteConfig = {
             root: fixturesPath,
             plugins: [plugin]
@@ -120,8 +120,8 @@ describe('BugsnagBuildReporterPlugin', () => {
 
         await build(viteConfig)
 
-        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagBuildReporterPlugin]creating build for version "1.2.3" using the bugsnag-cli')
-        expect(mockLogger.info).not.toHaveBeenCalledWith('[BugsnagBuildReporterPlugin]Build reported successfully')
-        expect(mockLogger.error).toHaveBeenCalledWith('[BugsnagBuildReporterPlugin]Error: Bugsnag CLI error')
+        expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagBuildReporterPlugin] creating build for version "1.2.3" using the bugsnag-cli')
+        expect(mockLogger.info).not.toHaveBeenCalledWith('[BugsnagBuildReporterPlugin] Build reported successfully')
+        expect(mockLogger.error).toHaveBeenCalledWith('[BugsnagBuildReporterPlugin] Error: Bugsnag CLI error')
     })
 })

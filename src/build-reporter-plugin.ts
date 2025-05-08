@@ -13,21 +13,21 @@ export function BugsnagBuildReporterPlugin (configOptions: BugsnagBuildReporterP
       const logger = configOptions.logger || this.environment.logger
 
       if (error) {
-        logger.error(`${LOG_PREFIX}build failed with error: ${error}`)
+        logger.error(`${LOG_PREFIX} build failed with error: ${error}`)
         return
       }
 
-      logger.info(`${LOG_PREFIX}creating build for version "${buildOptions.versionName}" using the bugsnag-cli`)
+      logger.info(`${LOG_PREFIX} creating build for version "${buildOptions.versionName}" using the bugsnag-cli`)
 
       Bugsnag.CreateBuild(buildOptions, process.cwd())
         .then((output) => {
             output.split('\n').forEach((line) => {
-              logger.info(LOG_PREFIX + line)
+              logger.info(`${LOG_PREFIX} ${line}`)
             })
         })
         .catch((err) => {
           err.toString().split('\n').forEach((line: string) => {
-            logger.error(LOG_PREFIX + line)
+            logger.error(`${LOG_PREFIX} ${line}`)
           })
         })
     }
