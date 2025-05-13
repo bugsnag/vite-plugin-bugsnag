@@ -33,7 +33,7 @@ describe('BugsnagBuildReporterPlugin', () => {
             }
         })
 
-        const fixturesPath = resolve(__dirname, '../test/fixtures/basic')
+        const fixturesPath = resolve(__dirname, 'fixtures/basic')
         const viteConfig = {
             root: fixturesPath,
             plugins: [plugin]
@@ -62,7 +62,7 @@ describe('BugsnagBuildReporterPlugin', () => {
             logger: mockLogger
         })
 
-        const fixturesPath = resolve(__dirname, '../test/fixtures/error')
+        const fixturesPath = resolve(__dirname, 'fixtures/error')
         const viteConfig = {
             root: fixturesPath,
             plugins: [plugin]
@@ -99,7 +99,7 @@ describe('BugsnagBuildReporterPlugin', () => {
             }
         })
 
-        const fixturesPath = resolve(__dirname, '../test/fixtures/basic')
+        const fixturesPath = resolve(__dirname, 'fixtures/basic')
         const viteConfig = {
             root: fixturesPath,
             plugins: [plugin]

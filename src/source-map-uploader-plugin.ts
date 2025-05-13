@@ -1,6 +1,8 @@
 import Bugsnag from '@bugsnag/cli'
+import { join, resolve } from 'path'
+import isValidUrl from './is-valid-url'
+
 import type { BugsnagUploadJsOptions } from '@bugsnag/cli'
-import path from 'path'
 import type { Plugin } from 'vite'
 
 const LOG_PREFIX = '[BugsnagSourceMapUploaderPlugin]'
@@ -11,14 +13,15 @@ interface Logger {
   warn: (message: string) => void
   error: (message: string) => void
 }
+
 export interface ConfigOptions {
   apiKey: string
   appVersion: string
+  base?: string
   endpoint?: string
   codeBundleId?: string
   logger?: Logger
-  baseUrl?: string
-  mode?: string // releaseStage?
+  mode?: string
 }
 
 export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): Plugin {
@@ -32,16 +35,18 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
     name: 'vite-plugin-bugsnag-source-map-uploader',
     async writeBundle (options, bundle) {
       const logger = configOptions.logger || this.environment.logger
-      const outputDir = options.dir || process.cwd()
+      const projectRoot = this.environment.config.root
+      const outputDir = options.dir || projectRoot
+      const baseUrl = configOptions.base || this.environment.config.base
+      const validBaseUrl = isValidUrl(baseUrl)
 
       if (enableSourcemapUploads) {
         const uploads: BugsnagUploadJsOptions[] = []
-        for (const [key, value] of Object.entries(bundle)) {
+        for (const [, value] of Object.entries(bundle)) {
           if (value.type === 'chunk' && !!value.sourcemapFileName) {
-            const bundle = key
-            const bundleUrl = configOptions.baseUrl ? new URL(value.fileName, configOptions.baseUrl).toString() : path.resolve(outputDir, value.fileName)
+            const bundle = resolve(outputDir, value.fileName)
+            const bundleUrl = validBaseUrl ? new URL(value.fileName, baseUrl).toString() : join(baseUrl, value.fileName)
             const sourceMap = value.sourcemapFileName ?? undefined
-            const projectRoot = process.cwd()
             const uploadOptions = getUploadOptions(bundle, bundleUrl, sourceMap, projectRoot, configOptions)
             uploads.push(uploadOptions)
           }

@@ -17,7 +17,8 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
     test('should return a valid plugin object', async () => {
         const plugin = BugsnagSourceMapUploaderPlugin({
             apiKey: 'test-api',
-            appVersion: '1.0.0'
+            appVersion: '1.0.0',
+            base: 'https://bugsnag.com'
         })
 
         expect(plugin.name).toBe('vite-plugin-bugsnag-source-map-uploader')
@@ -26,7 +27,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
     test('throws an error if apiKey is not provided', async () => {
         const createPlugin = () => BugsnagSourceMapUploaderPlugin({
             apiKey: undefined as unknown as string,
-            appVersion: '1.0.0',
+            appVersion: '1.0.0'
         })
 
         expect(createPlugin).toThrowError('[BugsnagSourceMapUploaderPlugin] "apiKey" is required')
@@ -44,12 +45,12 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
             logger: mockLogger,
             apiKey: 'test-api',
             appVersion: '1.0.0',
-            mode: 'production',
-            baseUrl: 'https://example.com'
+            mode: 'production'
         })
 
-        const fixturesPath = resolve(__dirname, '..', 'test/fixtures/basic')
+        const fixturesPath = resolve(__dirname, 'fixtures/basic')
         const viteConfig = {
+            base: 'https://bugsnag.com',
             root: fixturesPath,
             plugins: [plugin],
             build: { sourcemap: true } 
@@ -60,16 +61,16 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
         await build(viteConfig)
 
         const sourcemapUpload = vi.mocked(Bugsnag.Upload.Js)
-        const projectRoot = process.cwd()
         const outputDir = resolve(fixturesPath, 'dist')
+        const bundlePath = resolve(outputDir, 'assets/index-DTHX3LI9.js')
 
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] uploading sourcemaps using the bugsnag-cli')
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
         expect(sourcemapUpload).toHaveBeenCalledExactlyOnceWith({
                 apiKey: 'test-api',
-                bundleUrl: 'https://example.com/assets/index-DTHX3LI9.js',
-                bundle: 'assets/index-DTHX3LI9.js',
-                projectRoot,
+                bundleUrl: 'https://bugsnag.com/assets/index-DTHX3LI9.js',
+                bundle: bundlePath,
+                projectRoot: fixturesPath,
                 sourceMap: 'assets/index-DTHX3LI9.js.map',
                 versionName: '1.0.0'
             },
@@ -94,30 +95,29 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
             mode: 'production'
         })
 
-        const fixturesPath = resolve(__dirname, '..', 'test/fixtures/basic')
+        const fixturePath = resolve(__dirname, 'fixtures/basic')
         const viteConfig = {
-            root: fixturesPath,
+            base: 'https://bugsnag.com',
+            root: fixturePath,
             plugins: [plugin],
             build: { sourcemap: true } 
         }
 
-        cleanBuildDir(fixturesPath)
+        cleanBuildDir(fixturePath)
 
         await build(viteConfig)
 
         const sourcemapUpload = vi.mocked(Bugsnag.Upload.Js)
-
-        const projectRoot = process.cwd()
-        const outputDir = resolve(fixturesPath, 'dist')
-        const bundleUrl = resolve(outputDir, 'assets/index-DTHX3LI9.js')
+        const outputDir = resolve(fixturePath, 'dist')
+        const bundlePath = resolve(outputDir, 'assets/index-DTHX3LI9.js')
 
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] uploading sourcemaps using the bugsnag-cli')
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
         expect(sourcemapUpload).toHaveBeenCalledExactlyOnceWith({
                 apiKey: 'test-api',
-                bundleUrl,
-                bundle: 'assets/index-DTHX3LI9.js',
-                projectRoot,
+                bundleUrl: 'https://bugsnag.com/assets/index-DTHX3LI9.js',
+                bundle: bundlePath,
+                projectRoot: fixturePath,
                 sourceMap: 'assets/index-DTHX3LI9.js.map',
                 versionName: '1.0.0'
             },
@@ -142,14 +142,15 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
             mode: 'production'
         })
 
-        const fixturesPath = resolve(__dirname, '..', 'test/fixtures/basic')
+        const fixturePath = resolve(__dirname, 'fixtures/basic')
         const viteConfig = {
-            root: fixturesPath,
+            base: 'https://bugsnag.com',
+            root: fixturePath,
             plugins: [plugin],
             build: { sourcemap: true } 
         }
 
-        cleanBuildDir(fixturesPath)
+        cleanBuildDir(fixturePath)
 
         const sourcemapUpload = vi.mocked(Bugsnag.Upload.Js)
         sourcemapUpload.mockImplementationOnce(() => Promise.reject(new Error('Upload failed')))
@@ -158,6 +159,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
 
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] uploading sourcemaps using the bugsnag-cli')
         expect(mockLogger.error).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Error: Upload failed')
+        expect(mockLogger.info).not.toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
 
         sourcemapUpload.mockClear()
     })
