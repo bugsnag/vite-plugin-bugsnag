@@ -2,7 +2,6 @@ import Bugsnag from '@bugsnag/cli'
 import { join, resolve } from 'path'
 import isValidUrl from './is-valid-url'
 
-import type { BugsnagUploadJsOptions } from '@bugsnag/cli'
 import type { Plugin } from 'vite'
 
 const LOG_PREFIX = '[BugsnagSourceMapUploaderPlugin]'
@@ -41,7 +40,7 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
       const validBaseUrl = isValidUrl(baseUrl)
 
       if (enableSourcemapUploads) {
-        const uploads: BugsnagUploadJsOptions[] = []
+        const uploads = []
         for (const [, value] of Object.entries(bundle)) {
           if (value.type === 'chunk' && !!value.sourcemapFileName) {
             const bundle = resolve(outputDir, value.fileName)
@@ -74,8 +73,8 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
   }
 }
 
-function getUploadOptions (bundle: string, bundleUrl: string, sourceMap: string, projectRoot: string, configOptions: ConfigOptions): BugsnagUploadJsOptions {
-  const uploadOptions: BugsnagUploadJsOptions = {
+function getUploadOptions (bundle: string, bundleUrl: string, sourceMap: string, projectRoot: string, configOptions: ConfigOptions) {
+  const uploadOptions = {
     apiKey: configOptions.apiKey, // The BugSnag API key for the application.
     bundle, // Path to the minified JavaScript file that the source map relates to.
     bundleUrl, // For single file uploads, the URL of the minified JavaScript file that the source map relates to. 
@@ -88,7 +87,7 @@ function getUploadOptions (bundle: string, bundleUrl: string, sourceMap: string,
 
   for (const [key, value] of Object.entries(uploadOptions)) {
     if (value === undefined) {
-      delete uploadOptions[key as keyof BugsnagUploadJsOptions]
+      delete uploadOptions[key as keyof typeof uploadOptions]
     }
   }
 
