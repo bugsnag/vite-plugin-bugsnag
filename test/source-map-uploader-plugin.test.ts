@@ -80,7 +80,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
         sourcemapUpload.mockClear()
     })
 
-    test('should use the outputDir to construct urls if baseUrl is not provided', async () => {
+    test('should use the relative filepath for bundleUrl is base is not provided in config', async () => {
         const mockLogger = {
             info: vi.fn(),
             error: vi.fn(),
@@ -97,7 +97,6 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
 
         const fixturePath = resolve(__dirname, 'fixtures/basic')
         const viteConfig = {
-            base: 'https://bugsnag.com',
             root: fixturePath,
             plugins: [plugin],
             build: { sourcemap: true } 
@@ -115,7 +114,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
         expect(sourcemapUpload).toHaveBeenCalledExactlyOnceWith({
                 apiKey: 'test-api',
-                bundleUrl: 'https://bugsnag.com/assets/index-DTHX3LI9.js',
+                bundleUrl: '/assets/index-DTHX3LI9.js',
                 bundle: bundlePath,
                 projectRoot: fixturePath,
                 sourceMap: 'assets/index-DTHX3LI9.js.map',
