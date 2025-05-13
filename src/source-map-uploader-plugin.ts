@@ -21,6 +21,9 @@ export interface ConfigOptions {
   codeBundleId?: string
   logger?: Logger
   mode?: string
+  projectRoot?: string
+  overwrite?: boolean
+  logLevel?: 'info' | 'warn' | 'fatal' | 'debug'
 }
 
 export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): Plugin {
@@ -34,7 +37,7 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
     name: 'vite-plugin-bugsnag-source-map-uploader',
     async writeBundle (options, bundle) {
       const logger = configOptions.logger || this.environment.logger
-      const projectRoot = this.environment.config.root
+      const projectRoot = configOptions.projectRoot || this.environment.config.root
       const outputDir = options.dir || projectRoot
       const baseUrl = configOptions.base || this.environment.config.base
       const validBaseUrl = isValidUrl(baseUrl)
@@ -45,7 +48,7 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
           if (value.type === 'chunk' && !!value.sourcemapFileName) {
             const bundle = resolve(outputDir, value.fileName)
             const bundleUrl = validBaseUrl ? new URL(value.fileName, baseUrl).toString() : join(baseUrl, value.fileName)
-            const sourceMap = value.sourcemapFileName ?? undefined
+            const sourceMap = value.sourcemapFileName ? join(outputDir, value.sourcemapFileName) : undefined
             const uploadOptions = getUploadOptions(bundle, bundleUrl, sourceMap, projectRoot, configOptions)
             uploads.push(uploadOptions)
           }
@@ -73,7 +76,7 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
   }
 }
 
-function getUploadOptions (bundle: string, bundleUrl: string, sourceMap: string, projectRoot: string, configOptions: ConfigOptions) {
+function getUploadOptions (bundle: string, bundleUrl: string, sourceMap: string | undefined, projectRoot: string, configOptions: ConfigOptions) {
   const uploadOptions = {
     apiKey: configOptions.apiKey, // The BugSnag API key for the application.
     bundle, // Path to the minified JavaScript file that the source map relates to.
@@ -83,6 +86,8 @@ function getUploadOptions (bundle: string, bundleUrl: string, sourceMap: string,
     sourceMap, // Path to the source map file. This usually has the .min.js extension.
     uploadApiRootUrl: configOptions.endpoint, // The upload server hostname, optionally containing port number.
     versionName: configOptions.appVersion, // The version of the app that the source map applies to.
+    overwrite: configOptions.overwrite, // Whether to ignore and overwrite existing uploads with same identifier, rather than failing if a matching file exists.
+    logLevel: configOptions.logLevel // Sets the level of logging to debug, info, warn or fatal.
   }
 
   for (const [key, value] of Object.entries(uploadOptions)) {

@@ -63,6 +63,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
         const sourcemapUpload = vi.mocked(Bugsnag.Upload.Js)
         const outputDir = resolve(fixturesPath, 'dist')
         const bundlePath = resolve(outputDir, 'assets/index-DTHX3LI9.js')
+        const sourceMapPath = resolve(outputDir, 'assets/index-DTHX3LI9.js.map')
 
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] uploading sourcemaps using the bugsnag-cli')
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
@@ -71,7 +72,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
                 bundleUrl: 'https://bugsnag.com/assets/index-DTHX3LI9.js',
                 bundle: bundlePath,
                 projectRoot: fixturesPath,
-                sourceMap: 'assets/index-DTHX3LI9.js.map',
+                sourceMap: sourceMapPath,
                 versionName: '1.0.0'
             },
             outputDir
@@ -109,6 +110,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
         const sourcemapUpload = vi.mocked(Bugsnag.Upload.Js)
         const outputDir = resolve(fixturePath, 'dist')
         const bundlePath = resolve(outputDir, 'assets/index-DTHX3LI9.js')
+        const sourceMapPath = resolve(outputDir, 'assets/index-DTHX3LI9.js.map')
 
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] uploading sourcemaps using the bugsnag-cli')
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
@@ -117,7 +119,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
                 bundleUrl: '/assets/index-DTHX3LI9.js',
                 bundle: bundlePath,
                 projectRoot: fixturePath,
-                sourceMap: 'assets/index-DTHX3LI9.js.map',
+                sourceMap: sourceMapPath,
                 versionName: '1.0.0'
             },
             outputDir
