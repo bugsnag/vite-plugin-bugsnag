@@ -1,5 +1,4 @@
 import Bugsnag from '@bugsnag/cli'
-import type { BugsnagCreateBuildOptions } from '@bugsnag/cli'
 import type { Plugin } from 'vite'
 
 const LOG_PREFIX = '[BugsnagBuildReporterPlugin]'
@@ -13,21 +12,21 @@ export function BugsnagBuildReporterPlugin (configOptions: BugsnagBuildReporterP
       const logger = configOptions.logger || this.environment.logger
 
       if (error) {
-        logger.error(`${LOG_PREFIX}build failed with error: ${error}`)
+        logger.error(`${LOG_PREFIX} build failed with error: ${error}`)
         return
       }
 
-      logger.info(`${LOG_PREFIX}creating build for version "${buildOptions.versionName}" using the bugsnag-cli`)
+      logger.info(`${LOG_PREFIX} creating build for version "${buildOptions.versionName}" using the bugsnag-cli`)
 
       Bugsnag.CreateBuild(buildOptions, process.cwd())
         .then((output) => {
-            output.split('\n').forEach((line) => {
-              logger.info(LOG_PREFIX + line)
-            })
+          output.split('\n').forEach((line) => {
+            logger.info(`${LOG_PREFIX} ${line}`)
+          })
         })
         .catch((err) => {
           err.toString().split('\n').forEach((line: string) => {
-            logger.error(LOG_PREFIX + line)
+            logger.error(`${LOG_PREFIX} ${line}`)
           })
         })
     }
@@ -35,7 +34,7 @@ export function BugsnagBuildReporterPlugin (configOptions: BugsnagBuildReporterP
 }
 
 function getBuildOptions (configOptions: BugsnagBuildReporterPluginOptions) {
-  const buildOptions: BugsnagCreateBuildOptions = {
+  const buildOptions = {
     apiKey: configOptions.apiKey,
     versionName: configOptions.appVersion,
     autoAssignRelease: configOptions.autoAssignRelease,
@@ -51,7 +50,7 @@ function getBuildOptions (configOptions: BugsnagBuildReporterPluginOptions) {
 
   for (const [key, value] of Object.entries(buildOptions)) {
     if (value === undefined) {
-      delete buildOptions[key as keyof BugsnagCreateBuildOptions]
+      delete buildOptions[key as keyof typeof buildOptions]
     }
   }
 
