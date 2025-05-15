@@ -36,7 +36,7 @@ export function BugsnagBuildReporterPlugin (configOptions: BugsnagBuildReporterP
 function getBuildOptions (configOptions: BugsnagBuildReporterPluginOptions) {
   const buildOptions = {
     apiKey: configOptions.apiKey,
-    versionName: configOptions.appVersion,
+    versionName: configOptions.appVersion || process.env.npm_package_version,
     autoAssignRelease: configOptions.autoAssignRelease,
     builderName: configOptions.builderName,
     metadata: configOptions.metadata,
@@ -59,8 +59,8 @@ function getBuildOptions (configOptions: BugsnagBuildReporterPluginOptions) {
 
 export interface BugsnagBuildReporterPluginOptions {
   apiKey: string
-  appVersion: string // versionName
-  endpoint?: string // buildApiRootUrl
+  appVersion?: string
+  endpoint?: string
   autoAssignRelease?: boolean
   builderName?: string
   metadata?: object

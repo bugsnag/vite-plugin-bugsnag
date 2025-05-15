@@ -5,6 +5,8 @@ import { describe, expect, test, vi } from 'vitest'
 import { BugsnagSourceMapUploaderPlugin } from '../src/source-map-uploader-plugin'
 import cleanBuildDir from './lib/clean-build-dir'
 
+import { version } from '../package.json'
+
 vi.mock('@bugsnag/cli', () => ({
     default: {
         Upload: {
@@ -92,7 +94,6 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
         const plugin = BugsnagSourceMapUploaderPlugin({
             logger: mockLogger,
             apiKey: 'test-api',
-            appVersion: '1.0.0',
             mode: 'production'
         })
 
@@ -120,7 +121,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
                 bundle: bundlePath,
                 projectRoot: fixturePath,
                 sourceMap: sourceMapPath,
-                versionName: '1.0.0'
+                versionName: version
             },
             outputDir
         )

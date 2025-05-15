@@ -42,7 +42,7 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
       const projectRoot = configOptions.projectRoot || this.environment.config.root
       const outputDir = options.dir || projectRoot
       const baseUrl = configOptions.base || this.environment.config.base
-      const versionName = configOptions.appVersion || JSON.stringify(process.env.npm_package_version)
+      const versionName = configOptions.appVersion || process.env.npm_package_version || 'unknown'
       const validBaseUrl = isValidUrl(baseUrl)
 
       const uploads = []
