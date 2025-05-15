@@ -15,7 +15,7 @@ interface Logger {
 
 export interface ConfigOptions {
   apiKey: string
-  appVersion: string
+  appVersion?: string
   base?: string
   endpoint?: string
   codeBundleId?: string
@@ -36,47 +36,48 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
   return {
     name: 'vite-plugin-bugsnag-source-map-uploader',
     async writeBundle (options, bundle) {
+      if (!enableSourcemapUploads) return
+
       const logger = configOptions.logger || this.environment.logger
       const projectRoot = configOptions.projectRoot || this.environment.config.root
       const outputDir = options.dir || projectRoot
       const baseUrl = configOptions.base || this.environment.config.base
+      const versionName = configOptions.appVersion || JSON.stringify(process.env.npm_package_version)
       const validBaseUrl = isValidUrl(baseUrl)
 
-      if (enableSourcemapUploads) {
-        const uploads = []
-        for (const [, value] of Object.entries(bundle)) {
-          if (value.type === 'chunk' && !!value.sourcemapFileName) {
-            const bundle = resolve(outputDir, value.fileName)
-            const bundleUrl = validBaseUrl ? new URL(value.fileName, baseUrl).toString() : join(baseUrl, value.fileName)
-            const sourceMap = value.sourcemapFileName ? join(outputDir, value.sourcemapFileName) : undefined
-            const uploadOptions = getUploadOptions(bundle, bundleUrl, sourceMap, projectRoot, configOptions)
-            uploads.push(uploadOptions)
-          }
+      const uploads = []
+      for (const [, value] of Object.entries(bundle)) {
+        if (value.type === 'chunk' && !!value.sourcemapFileName) {
+          const bundle = resolve(outputDir, value.fileName)
+          const bundleUrl = validBaseUrl ? new URL(value.fileName, baseUrl).toString() : join(baseUrl, value.fileName)
+          const sourceMap = value.sourcemapFileName ? join(outputDir, value.sourcemapFileName) : undefined
+          const uploadOptions = getUploadOptions(bundle, bundleUrl, sourceMap, projectRoot, versionName, configOptions)
+          uploads.push(uploadOptions)
         }
-
-        logger.info(`${LOG_PREFIX} uploading sourcemaps using the bugsnag-cli`)
-
-        const tasks = uploads.map((uploadOptions) => {
-          return Bugsnag.Upload.Js(uploadOptions, outputDir)
-            .then((output) => {
-              output.split('\n').forEach((line) => {
-                logger.info(`${LOG_PREFIX} ${line}`)
-              })
-            })
-            .catch((err) => {
-              err.toString().split('\n').forEach((line: string) => {
-                logger.error(`${LOG_PREFIX} ${line}`)
-              })
-            })
-        })
-
-        await Promise.all(tasks)
       }
+
+      logger.info(`${LOG_PREFIX} uploading sourcemaps using the bugsnag-cli`)
+
+      const tasks = uploads.map((uploadOptions) => {
+        return Bugsnag.Upload.Js(uploadOptions, outputDir)
+          .then((output) => {
+            output.split('\n').forEach((line) => {
+              logger.info(`${LOG_PREFIX} ${line}`)
+            })
+          })
+          .catch((err) => {
+            err.toString().split('\n').forEach((line: string) => {
+              logger.error(`${LOG_PREFIX} ${line}`)
+            })
+          })
+      })
+
+      await Promise.all(tasks)
     }
   }
 }
 
-function getUploadOptions (bundle: string, bundleUrl: string, sourceMap: string | undefined, projectRoot: string, configOptions: ConfigOptions) {
+function getUploadOptions (bundle: string, bundleUrl: string, sourceMap: string | undefined, projectRoot: string, versionName: string, configOptions: ConfigOptions) {
   const uploadOptions = {
     apiKey: configOptions.apiKey, // The BugSnag API key for the application.
     bundle, // Path to the minified JavaScript file that the source map relates to.
@@ -85,7 +86,7 @@ function getUploadOptions (bundle: string, bundleUrl: string, sourceMap: string 
     projectRoot, // The path to strip from the beginning of source file names referenced in stacktraces on the BugSnag dashboard.
     sourceMap, // Path to the source map file. This usually has the .min.js extension.
     uploadApiRootUrl: configOptions.endpoint, // The upload server hostname, optionally containing port number.
-    versionName: configOptions.appVersion, // The version of the app that the source map applies to.
+    versionName, // The version of the app that the source map applies to.
     overwrite: configOptions.overwrite, // Whether to ignore and overwrite existing uploads with same identifier, rather than failing if a matching file exists.
     logLevel: configOptions.logLevel // Sets the level of logging to debug, info, warn or fatal.
   }
