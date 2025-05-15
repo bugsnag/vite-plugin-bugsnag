@@ -81,7 +81,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
         sourcemapUpload.mockClear()
     })
 
-    test('should use the relative filepath for bundleUrl is base is not provided in config', async () => {
+    test('should use the relative filepath for bundleUrl if base is not provided in config', async () => {
         const mockLogger = {
             info: vi.fn(),
             error: vi.fn(),
