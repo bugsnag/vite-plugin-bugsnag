@@ -1,5 +1,6 @@
 import Bugsnag from '@bugsnag/cli'
 import { join, resolve } from 'path'
+import getLogLevel from './get-log-level'
 import isValidUrl from './is-valid-url'
 
 import type { Plugin } from 'vite'
@@ -66,7 +67,7 @@ function getUploadOptions (bundle: string, bundleUrl: string, sourceMap: string 
     uploadApiRootUrl: configOptions.endpoint, // The upload server hostname, optionally containing port number.
     versionName, // The version of the app that the source map applies to.
     overwrite: configOptions.overwrite, // Whether to ignore and overwrite existing uploads with same identifier, rather than failing if a matching file exists.
-    logLevel: configOptions.logLevel // Sets the level of logging to debug, info, warn or fatal.
+    logLevel: getLogLevel(configOptions.logLevel) // Sets the level of logging to debug, info, warn or fatal.
   }
 
   for (const [key, value] of Object.entries(uploadOptions)) {

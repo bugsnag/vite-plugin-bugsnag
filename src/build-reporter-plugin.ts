@@ -1,6 +1,7 @@
 import Bugsnag from '@bugsnag/cli'
 import type { Plugin } from 'vite'
 import type { BuildReporterConfig } from './config'
+import getLogLevel from './get-log-level'
 
 const LOG_PREFIX = '[BugsnagBuildReporterPlugin]'
 
@@ -47,7 +48,7 @@ function getBuildOptions (configOptions: BuildReporterConfig) {
     repository: configOptions.sourceControl?.repository,
     revision: configOptions.sourceControl?.revision,
     buildApiRootUrl: configOptions.endpoint,
-    logLevel: configOptions.logLevel
+    logLevel: getLogLevel(configOptions.logLevel)
   }
 
   for (const [key, value] of Object.entries(buildOptions)) {
