@@ -46,8 +46,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
         const plugin = BugsnagSourceMapUploaderPlugin({
             logger: mockLogger,
             apiKey: 'test-api',
-            appVersion: '1.0.0',
-            mode: 'production'
+            appVersion: '1.0.0'
         })
 
         const fixturesPath = resolve(__dirname, 'fixtures/basic')
@@ -93,8 +92,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
 
         const plugin = BugsnagSourceMapUploaderPlugin({
             logger: mockLogger,
-            apiKey: 'test-api',
-            mode: 'production'
+            apiKey: 'test-api'
         })
 
         const fixturePath = resolve(__dirname, 'fixtures/basic')
@@ -140,8 +138,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
         const plugin = BugsnagSourceMapUploaderPlugin({
             logger: mockLogger,
             apiKey: 'test-api',
-            appVersion: '1.0.0',
-            mode: 'production'
+            appVersion: '1.0.0'
         })
 
         const fixturePath = resolve(__dirname, 'fixtures/basic')

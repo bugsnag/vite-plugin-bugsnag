@@ -3,47 +3,25 @@ import { join, resolve } from 'path'
 import isValidUrl from './is-valid-url'
 
 import type { Plugin } from 'vite'
+import type { SourceMapUploaderConfig } from './config'
 
 const LOG_PREFIX = '[BugsnagSourceMapUploaderPlugin]'
 
-interface Logger {
-  debug: (message: string) => void
-  info: (message: string) => void
-  warn: (message: string) => void
-  error: (message: string) => void
-}
-
-export interface ConfigOptions {
-  apiKey: string
-  appVersion?: string
-  base?: string
-  endpoint?: string
-  codeBundleId?: string
-  logger?: Logger
-  mode?: string
-  projectRoot?: string
-  overwrite?: boolean
-  logLevel?: 'info' | 'warn' | 'fatal' | 'debug'
-}
-
-export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): Plugin {
+export function BugsnagSourceMapUploaderPlugin (configOptions: SourceMapUploaderConfig): Plugin {
   if (typeof configOptions.apiKey !== 'string' || configOptions.apiKey.length < 1) {
     throw new Error(`${LOG_PREFIX} "apiKey" is required`)
   }
 
-  const enableSourcemapUploads = configOptions.mode === 'production' || process.env.NODE_ENV === 'production'
-
   return {
     name: 'vite-plugin-bugsnag-source-map-uploader',
     async writeBundle (options, bundle) {
-      if (!enableSourcemapUploads) return
-
       const logger = configOptions.logger || this.environment.logger
       const projectRoot = configOptions.projectRoot || this.environment.config.root
       const outputDir = options.dir || projectRoot
       const baseUrl = configOptions.base || this.environment.config.base
       const versionName = configOptions.appVersion || process.env.npm_package_version || 'unknown'
       const validBaseUrl = isValidUrl(baseUrl)
+      const target = configOptions.path || outputDir
 
       const uploads = []
       for (const [, value] of Object.entries(bundle)) {
@@ -59,7 +37,7 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
       logger.info(`${LOG_PREFIX} uploading sourcemaps using the bugsnag-cli`)
 
       const tasks = uploads.map((uploadOptions) => {
-        return Bugsnag.Upload.Js(uploadOptions, outputDir)
+        return Bugsnag.Upload.Js(uploadOptions, target)
           .then((output) => {
             output.split('\n').forEach((line) => {
               logger.info(`${LOG_PREFIX} ${line}`)
@@ -77,7 +55,7 @@ export function BugsnagSourceMapUploaderPlugin (configOptions: ConfigOptions): P
   }
 }
 
-function getUploadOptions (bundle: string, bundleUrl: string, sourceMap: string | undefined, projectRoot: string, versionName: string, configOptions: ConfigOptions) {
+function getUploadOptions (bundle: string, bundleUrl: string, sourceMap: string | undefined, projectRoot: string, versionName: string, configOptions: SourceMapUploaderConfig) {
   const uploadOptions = {
     apiKey: configOptions.apiKey, // The BugSnag API key for the application.
     bundle, // Path to the minified JavaScript file that the source map relates to.

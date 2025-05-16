@@ -1,10 +1,12 @@
 import Bugsnag from '@bugsnag/cli'
 import type { Plugin } from 'vite'
+import type { BuildReporterConfig } from './config'
 
 const LOG_PREFIX = '[BugsnagBuildReporterPlugin]'
 
-export function BugsnagBuildReporterPlugin (configOptions: BugsnagBuildReporterPluginOptions): Plugin {
+export function BugsnagBuildReporterPlugin (configOptions: BuildReporterConfig): Plugin {
   const buildOptions = getBuildOptions(configOptions)
+  const target = configOptions.path || process.cwd()
 
   return {
     name: 'vite-plugin-bugsnag-build-reporter',
@@ -18,7 +20,7 @@ export function BugsnagBuildReporterPlugin (configOptions: BugsnagBuildReporterP
 
       logger.info(`${LOG_PREFIX} creating build for version "${buildOptions.versionName}" using the bugsnag-cli`)
 
-      Bugsnag.CreateBuild(buildOptions, process.cwd())
+      Bugsnag.CreateBuild(buildOptions, target)
         .then((output) => {
           output.split('\n').forEach((line) => {
             logger.info(`${LOG_PREFIX} ${line}`)
@@ -33,7 +35,7 @@ export function BugsnagBuildReporterPlugin (configOptions: BugsnagBuildReporterP
   }
 }
 
-function getBuildOptions (configOptions: BugsnagBuildReporterPluginOptions) {
+function getBuildOptions (configOptions: BuildReporterConfig) {
   const buildOptions = {
     apiKey: configOptions.apiKey,
     versionName: configOptions.appVersion || process.env.npm_package_version,
@@ -44,8 +46,8 @@ function getBuildOptions (configOptions: BugsnagBuildReporterPluginOptions) {
     provider: configOptions.sourceControl?.provider,
     repository: configOptions.sourceControl?.repository,
     revision: configOptions.sourceControl?.revision,
-    buildApiRootUrl: configOptions.endpoint,
-    logLevel: configOptions.logLevel
+    buildApiRootUrl: configOptions?.endpoint,
+    logLevel: configOptions?.logLevel
   }
 
   for (const [key, value] of Object.entries(buildOptions)) {
@@ -55,26 +57,4 @@ function getBuildOptions (configOptions: BugsnagBuildReporterPluginOptions) {
   }
 
   return buildOptions
-}
-
-export interface BugsnagBuildReporterPluginOptions {
-  apiKey: string
-  appVersion?: string
-  endpoint?: string
-  autoAssignRelease?: boolean
-  builderName?: string
-  metadata?: object
-  releaseStage?: string
-  sourceControl?: {
-    provider?: string
-    repository?: string
-    revision?: string
-  }
-  logLevel?: string
-  logger?: {
-    debug: (message: string) => void
-    info: (message: string) => void
-    warn: (message: string) => void
-    error: (message: string) => void
-  }
 }
