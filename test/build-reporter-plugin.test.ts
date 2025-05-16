@@ -111,11 +111,7 @@ describe('BugsnagBuildReporterPlugin', () => {
         const originalCreateBuild = vi.mocked(BugsnagCLI.CreateBuild)
         originalCreateBuild.mockImplementationOnce(() => Promise.reject(new Error('Bugsnag CLI error')))
 
-        try {
-            await build(viteConfig)
-        } catch {
-            // Ignore random errors with copying files, unrelated to the test
-        }
+        await build(viteConfig)
 
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagBuildReporterPlugin] creating build for version "1.2.3" using the bugsnag-cli')
         expect(mockLogger.info).not.toHaveBeenCalledWith('[BugsnagBuildReporterPlugin] Build reported successfully')
