@@ -46,8 +46,8 @@ function getBuildOptions (configOptions: BuildReporterConfig) {
     provider: configOptions.sourceControl?.provider,
     repository: configOptions.sourceControl?.repository,
     revision: configOptions.sourceControl?.revision,
-    buildApiRootUrl: configOptions?.endpoint,
-    logLevel: configOptions?.logLevel
+    buildApiRootUrl: configOptions.endpoint,
+    logLevel: configOptions.logLevel
   }
 
   for (const [key, value] of Object.entries(buildOptions)) {
