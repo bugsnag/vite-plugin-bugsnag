@@ -11,7 +11,7 @@
 ## Installation
 
 ```
-npm install --save-dev vite-plugin-bugsnag
+npm install --save-dev @bugsnag/vite-plugin-bugsnag
 ```
 
 ## Usage
