@@ -1,6 +1,6 @@
 {
-  "name": "vite-plugin-bugsnag",
-  "version": "0.0.1",
+  "name": "@bugsnag/vite-plugin-bugsnag",
+  "version": "1.0.0",
   "description": "Vite plugins for common BugSnag actions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,6 +20,9 @@
     "vite-plugin",
     "bugsnag",
     "sourcemaps"
+  ],
+  "files": [
+    "dist"
   ],
   "author": "BugSnag",
   "license": "MIT",
