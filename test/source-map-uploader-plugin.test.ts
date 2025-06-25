@@ -5,6 +5,8 @@ import { describe, expect, test, vi } from 'vitest'
 import { BugsnagSourceMapUploaderPlugin } from '../src/source-map-uploader-plugin'
 import cleanBuildDir from './lib/clean-build-dir'
 
+import { version } from '../package.json'
+
 vi.mock('@bugsnag/cli', () => ({
     default: {
         Upload: {
@@ -44,8 +46,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
         const plugin = BugsnagSourceMapUploaderPlugin({
             logger: mockLogger,
             apiKey: 'test-api',
-            appVersion: '1.0.0',
-            mode: 'production'
+            appVersion: '1.0.0'
         })
 
         const fixturesPath = resolve(__dirname, 'fixtures/basic')
@@ -81,7 +82,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
         sourcemapUpload.mockClear()
     })
 
-    test('should use the relative filepath for bundleUrl is base is not provided in config', async () => {
+    test('should use the relative filepath for bundleUrl if base is not provided in config', async () => {
         const mockLogger = {
             info: vi.fn(),
             error: vi.fn(),
@@ -91,9 +92,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
 
         const plugin = BugsnagSourceMapUploaderPlugin({
             logger: mockLogger,
-            apiKey: 'test-api',
-            appVersion: '1.0.0',
-            mode: 'production'
+            apiKey: 'test-api'
         })
 
         const fixturePath = resolve(__dirname, 'fixtures/basic')
@@ -120,7 +119,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
                 bundle: bundlePath,
                 projectRoot: fixturePath,
                 sourceMap: sourceMapPath,
-                versionName: '1.0.0'
+                versionName: version
             },
             outputDir
         )
@@ -139,8 +138,7 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
         const plugin = BugsnagSourceMapUploaderPlugin({
             logger: mockLogger,
             apiKey: 'test-api',
-            appVersion: '1.0.0',
-            mode: 'production'
+            appVersion: '1.0.0'
         })
 
         const fixturePath = resolve(__dirname, 'fixtures/basic')
