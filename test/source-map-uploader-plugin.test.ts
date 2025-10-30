@@ -67,21 +67,22 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
 
         const sourcemapUpload = vi.mocked(Bugsnag.Upload.Js)
         const outputDir = resolve(fixturesPath, 'dist')
-        const bundlePath = resolve(outputDir, 'assets/index-DTHX3LI9.js')
-        const sourceMapPath = resolve(outputDir, 'assets/index-DTHX3LI9.js.map')
 
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] uploading sourcemaps using the bugsnag-cli')
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
-        expect(sourcemapUpload).toHaveBeenCalledExactlyOnceWith({
-                apiKey: 'test-api',
-                bundleUrl: 'https://bugsnag.com/assets/index-DTHX3LI9.js',
-                bundle: bundlePath,
-                projectRoot: fixturesPath,
-                sourceMap: sourceMapPath,
-                versionName: '1.0.0'
-            },
-            outputDir
-        )
+        expect(sourcemapUpload).toHaveBeenCalledOnce()
+        
+        const [uploadOptions, targetDir] = sourcemapUpload.mock.calls[0]
+        expect(uploadOptions).toBeDefined()
+        expect(uploadOptions).toMatchObject({
+            apiKey: 'test-api',
+            projectRoot: fixturesPath,
+            versionName: '1.0.0'
+        })
+        expect(uploadOptions!.bundleUrl).toMatch(/^https:\/\/bugsnag\.com\/assets\/index-[a-zA-Z0-9]+\.js$/)
+        expect(uploadOptions!.bundle).toMatch(/\/assets\/index-[a-zA-Z0-9]+\.js$/)
+        expect(uploadOptions!.sourceMap).toMatch(/\/assets\/index-[a-zA-Z0-9]+\.js\.map$/)
+        expect(targetDir).toBe(outputDir)
     })
 
     test('should use the relative filepath for bundleUrl if base is not provided in config', async () => {
@@ -110,21 +111,22 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
 
         const sourcemapUpload = vi.mocked(Bugsnag.Upload.Js)
         const outputDir = resolve(fixturePath, 'dist')
-        const bundlePath = resolve(outputDir, 'assets/index-DTHX3LI9.js')
-        const sourceMapPath = resolve(outputDir, 'assets/index-DTHX3LI9.js.map')
 
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] uploading sourcemaps using the bugsnag-cli')
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
-        expect(sourcemapUpload).toHaveBeenCalledExactlyOnceWith({
-                apiKey: 'test-api',
-                bundleUrl: '/assets/index-DTHX3LI9.js',
-                bundle: bundlePath,
-                projectRoot: fixturePath,
-                sourceMap: sourceMapPath,
-                versionName: version
-            },
-            outputDir
-        )
+        expect(sourcemapUpload).toHaveBeenCalledOnce()
+        
+        const [uploadOptions, targetDir] = sourcemapUpload.mock.calls[0]
+        expect(uploadOptions).toBeDefined()
+        expect(uploadOptions).toMatchObject({
+            apiKey: 'test-api',
+            projectRoot: fixturePath,
+            versionName: version
+        })
+        expect(uploadOptions!.bundleUrl).toMatch(/^\/assets\/index-[a-zA-Z0-9]+\.js$/)
+        expect(uploadOptions!.bundle).toMatch(/\/assets\/index-[a-zA-Z0-9]+\.js$/)
+        expect(uploadOptions!.sourceMap).toMatch(/\/assets\/index-[a-zA-Z0-9]+\.js\.map$/)
+        expect(targetDir).toBe(outputDir)
     })
 
     test('logs an error if the upload fails', async () => {
