@@ -1,7 +1,7 @@
 import Bugsnag from '@bugsnag/cli'
 import { resolve } from 'path'
 import { build } from 'vite'
-import { describe, expect, test, vi } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { BugsnagSourceMapUploaderPlugin } from '../src/source-map-uploader-plugin'
 import cleanBuildDir from './lib/clean-build-dir'
 
@@ -16,6 +16,10 @@ vi.mock('@bugsnag/cli', () => ({
 }))
 
 describe('BugsnagSourceMapUploaderPlugin', () => {
+    beforeEach(() => {
+        vi.mocked(Bugsnag.Upload.Js).mockClear()
+    })
+
     test('should return a valid plugin object', async () => {
         const plugin = BugsnagSourceMapUploaderPlugin({
             apiKey: 'test-api',
@@ -78,8 +82,6 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
             },
             outputDir
         )
-        
-        sourcemapUpload.mockClear()
     })
 
     test('should use the relative filepath for bundleUrl if base is not provided in config', async () => {
@@ -123,8 +125,6 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
             },
             outputDir
         )
-
-        sourcemapUpload.mockClear()
     })
 
     test('logs an error if the upload fails', async () => {
@@ -159,7 +159,5 @@ describe('BugsnagSourceMapUploaderPlugin', () => {
         expect(mockLogger.info).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] uploading sourcemaps using the bugsnag-cli')
         expect(mockLogger.error).toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Error: Upload failed')
         expect(mockLogger.info).not.toHaveBeenCalledWith('[BugsnagSourceMapUploaderPlugin] Sourcemaps uploaded successfully')
-
-        sourcemapUpload.mockClear()
     })
 })
