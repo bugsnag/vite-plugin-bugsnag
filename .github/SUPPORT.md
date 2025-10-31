@@ -9,7 +9,8 @@ When contacting support, please include as much information as necessary, includ
 - steps to reproduce
 - expected/actual behaviour 
 
-* BugSnag version:
+* Node version:
+* NPM version:
 * Vite plugin version:
 * Vite version:
 
