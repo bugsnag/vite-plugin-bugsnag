@@ -19,7 +19,8 @@ A clear and concise description of what the bug is.
 4. See error
 
 ### Environment
-* Node version:
+* BugSnag version:
+* Vite plugin version:
 * Vite version:
 
 <!--
