@@ -1,6 +1,6 @@
 {
   "name": "@bugsnag/vite-plugin-bugsnag",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Vite plugins for common BugSnag actions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
