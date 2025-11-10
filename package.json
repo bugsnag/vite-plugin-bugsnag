@@ -45,7 +45,7 @@
     "vitest": "^3.1.2"
   },
   "peerDependencies": {
-    "vite": "^6.3.3"
+    "vite": ">=6.0.0 || >=7.0.0"
   },
   "dependencies": {
     "@bugsnag/cli": "^3.1.0"
