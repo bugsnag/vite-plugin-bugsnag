@@ -20,6 +20,8 @@ A clear and concise description of what the bug is.
 
 ### Environment
 * Node version:
+* NPM version:
+* Vite plugin version:
 * Vite version:
 
 <!--
