@@ -49,5 +49,9 @@
   },
   "dependencies": {
     "@bugsnag/cli": "^3.1.0"
+  },
+  "overrides": {
+    "tmp": "0.2.7",
+    "picomatch": "4.0.4"
   }
 }
