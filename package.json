@@ -53,7 +53,8 @@
   
  "overrides": {
     "tmp": "^0.2.6",
-    "picomatch": "^4.0.4"
+    "picomatch": "^4.0.4",
+    "undici": "^6.27.0"
   }
 
 }
