@@ -1,1 +1,1 @@
-npm i --no-save --no-package-lock --legacy-peer-deps vite@$VITE_VERSION
+npm i --no-save --no-package-lock vite@$VITE_VERSION
